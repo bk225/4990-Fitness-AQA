@@ -203,7 +203,7 @@ def main():
             # print('Training set size: ', len(train_dataset.keys), ';    Val set size: ', len(val_dataset.keys), ';    Test set size: ', len(test_dataset.keys))
         #---------------------------------------#
 
-        saving_dir = '/data/paritosh_trained_wts/image_model/ssl/cvcrl_fc1_noaug_noolmaskgray/'
+        saving_dir = '/content/drive/MyDrive/Fitness-AQA_WORKING/Squat_runs/baseline_run/'
 
         for param_group in optimizer.param_groups:
             print('Current learning rate: ', param_group['lr'])
