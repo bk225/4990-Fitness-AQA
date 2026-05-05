@@ -10,7 +10,7 @@ from torch.utils.data import Dataset
 from torchvision import transforms
 from PIL import Image, ImageDraw
 from opts_exercise_qa import *
-from augmentations import image_augmentations
+import sys; sys.path.append("../../data_augmentations"); import image_augmentations
 
 torch.manual_seed(randomseed); torch.cuda.manual_seed_all(randomseed); random.seed(randomseed); np.random.seed(randomseed)
 torch.backends.cudnn.deterministic=True
@@ -48,7 +48,7 @@ def load_image(image_path, transform=None, augmentations=None):
     image = image.resize(size, interpolator)
 
     #------------applying augmentations-------------#
-    image = image_augmentations.apply_augmentations(image, augmentations=augmentations)
+    # augmentations disabled for baseline
     #-----------------------------------------------#
     # image.show()
     # input('hi')
@@ -72,14 +72,18 @@ class VideoDataset(Dataset):
         # excluding test samples
         test_samples2exclude = filenames2trajnames(json.load(open(train_val_test_sets_dir + 'test_keys.json')))
         self.trajectories_files = exclude_list(self.trajectories_files, test_samples2exclude)
+
+        # Keep only trajectory files that have matching frame folders
+        self.trajectories_files = [f for f in self.trajectories_files if os.path.isdir(ssl_frames_dir + f.split('.')[0] + '/')]
+        print(f"Usable {mode} trajectories:", len(self.trajectories_files))
         # print('traj files: ', self.trajectories_files)
         # print('len of traj files b4: ', len(self.trajectories_files))
         if self.mode == 'train':
-            self.trajectories_files = self.trajectories_files[:-500]
+            self.trajectories_files = self.trajectories_files
         elif self.mode == 'val':
-            self.trajectories_files = self.trajectories_files[-500:]
+            self.trajectories_files = self.trajectories_files
         elif self.mode == 'test':
-            self.trajectories_files = self.trajectories_files[-500:]
+            self.trajectories_files = self.trajectories_files
         else:
             input('Wrong type of mode selected. What do you want to do?')
         # print('len of ssl_traj_files: ', len(self.trajectories_files))

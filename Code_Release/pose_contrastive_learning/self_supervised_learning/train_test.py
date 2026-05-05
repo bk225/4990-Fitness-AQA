@@ -4,14 +4,14 @@
 import os
 import torch
 from torch.utils.data import DataLoader
-from ssl_contrastive_image_cleaned.dataloader import VideoDataset
-from ssl_contrastive_image_cleaned.dataloader_eval import VideoDataset_Eval
+from dataloader import VideoDataset
+from dataloader import VideoDataset as VideoDataset_Eval
 import random
 import torch.optim as optim
 import torch.nn.functional as F
 from opts_exercise_qa import *
 import numpy as np
-from ssl_contrastive_image_cleaned.models import my_resnet, linear_layers
+import sys; sys.path.append(".."); from models import my_resnet, linear_layers
 
 torch.manual_seed(randomseed); torch.cuda.manual_seed_all(randomseed); random.seed(randomseed); np.random.seed(randomseed)
 torch.backends.cudnn.deterministic=True
@@ -44,9 +44,9 @@ def train_phase(train_dataloader, optimizer, epoch, saving_dir):
     iteration = 0
     for data in train_dataloader:
 
-        anchor_im = data['anchor_im'].cuda()
-        positive_im = data['positive_im'].cuda()
-        negative_im = data['negative_im'].cuda()
+        anchor_im = data['anchor_im'].to(device)
+        positive_im = data['positive_im'].to(device)
+        negative_im = data['negative_im'].to(device)
 
         anchor_im_feats = F.normalize(model_linear_layers(model_CNN(anchor_im)), dim=-1, p=2)
         positive_im_feats = F.normalize(model_linear_layers(model_CNN(positive_im)), dim=-1, p=2)
@@ -97,9 +97,9 @@ def test_phase(mode, test_dataloader, saving_dir):
         dist_ap = []; dist_an = []
         iteration = 0
         for data in test_dataloader:
-            anchor_im = data['anchor_im'].cuda()
-            positive_im = data['positive_im'].cuda()
-            negative_im = data['negative_im'].cuda()
+            anchor_im = data['anchor_im'].to(device)
+            positive_im = data['positive_im'].to(device)
+            negative_im = data['negative_im'].to(device)
             # print('shape of anchor clip: ', anchor_clip.shape)
 
             anchor_im_feats = F.normalize(model_linear_layers(model_CNN(anchor_im)), dim=-1, p=2)
@@ -203,7 +203,7 @@ def main():
             # print('Training set size: ', len(train_dataset.keys), ';    Val set size: ', len(val_dataset.keys), ';    Test set size: ', len(test_dataset.keys))
         #---------------------------------------#
 
-        saving_dir = '/data/paritosh_trained_wts/image_model/ssl/cvcrl_fc1_noaug_noolmaskgray/'
+        saving_dir = './outputs/'
 
         for param_group in optimizer.param_groups:
             print('Current learning rate: ', param_group['lr'])
@@ -224,32 +224,33 @@ def main():
             save_model(model_linear_layers, 'model_linear_layers', epoch, saving_dir)
 
     # testing phase
-    test_phase(test_dataloader)
+    # test_phase(test_dataloader)  # disabled: test_dataloader not defined
 
 
 
 
 
 if __name__ == '__main__':
-    torch.cuda.set_device(0)
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    print("Using device:", device)
     model_CNN = my_resnet.resnet18(pretrained=False)
     #
-    model_CNN_pretrained_dict = torch.load('/home/dockeruser/.cache/torch/hub/checkpoints/resnet18-5c106cde.pth')
-    model_CNN_dict = model_CNN.state_dict()
-    model_CNN_pretrained_dict = {k: v for k, v in model_CNN_pretrained_dict.items() if k in model_CNN_dict}
-    model_CNN_dict.update(model_CNN_pretrained_dict)
-    model_CNN.load_state_dict(model_CNN_dict)
+    model_CNN_pretrained_dict = None  # skipped missing pretrained checkpoint
+    # model_CNN_dict = model_CNN.state_dict()
+    # skipped pretrained filtering
+    # skipped pretrained update
+    # skipped pretrained load
     #
-    model_CNN = model_CNN.cuda()
+    model_CNN = model_CNN.to(device)
     # print('model cnn: ', model_CNN)
 
     # # loading our error classifier
     # model_classifier = C3D_dilated_head_classifier()
-    # model_classifier = model_classifier.cuda()
+    # model_classifier = model_classifier.to(device)
 
     model_linear_layers = linear_layers.linear_layers()
     # model_linear_layers = nn.DataParallel(model_linear_layers)
-    model_linear_layers = model_linear_layers.cuda()
+    model_linear_layers = model_linear_layers.to(device)
 
     os.getcwd()
 

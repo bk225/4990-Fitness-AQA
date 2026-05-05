@@ -3,9 +3,9 @@
 # =========================
 
 base_learning_rate = 0.001
-train_batch_size_2dcnn = 16
-test_batch_size_2dcnn = 16
-max_epochs = 20
+train_batch_size_2dcnn = 4
+test_batch_size_2dcnn = 4
+max_epochs = 2
 
 randomseed = 42
 
@@ -22,9 +22,9 @@ C_2dcnn = 3
 # Dataset Paths (YOU MUST EDIT THESE)
 # =========================
 
-ssl_trajectories_dir = "PATH_TO_TRAJECTORIES/"
-ssl_frames_dir = "PATH_TO_FRAMES/"
-train_val_test_sets_dir = "PATH_TO_SPLITS/"
+ssl_trajectories_dir = "/content/drive/MyDrive/Fitness-AQA_WORKING/Squat/trajectories/"
+ssl_frames_dir = "/content/drive/MyDrive/Fitness-AQA_WORKING/Squat/frames/"
+train_val_test_sets_dir = "/content/drive/MyDrive/Fitness-AQA_WORKING/Squat/Splits/"
 
 # =========================
 # Other Training Settings

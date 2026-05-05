@@ -1,0 +1,8 @@
+
+__pycache__/
+*.pyc
+outputs/
+dataset
+Code_Release/pose_contrastive_learning/self_supervised_learning/outputs/
+Code_Release/data_augmentations/__pycache__/
+Code_Release/pose_contrastive_learning/self_supervised_learning/__pycache__/
