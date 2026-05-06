@@ -22,9 +22,9 @@ C_2dcnn = 3
 # Dataset Paths (YOU MUST EDIT THESE)
 # =========================
 
-ssl_trajectories_dir = "/content/drive/MyDrive/Fitness-AQA_WORKING/Squat/trajectories/"
-ssl_frames_dir = "/content/drive/MyDrive/Fitness-AQA_WORKING/Squat/frames/"
-train_val_test_sets_dir = "/content/drive/MyDrive/Fitness-AQA_WORKING/Squat/Splits/"
+ssl_trajectories_dir = "/content/drive/MyDrive/Fitness-AQA_WORKING/OHP_REAL/trajectories/bar_trajectories_scalar/"
+ssl_frames_dir = "/content/drive/MyDrive/Fitness-AQA_WORKING/OHP_REAL/frames_extracted/"
+train_val_test_sets_dir = "/content/drive/MyDrive/Fitness-AQA_WORKING/OHP_REAL/Splits_SSL_TEMP/"
 
 # =========================
 # Other Training Settings
