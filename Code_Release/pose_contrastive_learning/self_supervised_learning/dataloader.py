@@ -62,19 +62,19 @@ class VideoDataset(Dataset):
     def __init__(self, mode, ssl_contrastive_phase_gap):
         super(VideoDataset, self).__init__()
         self.mode = mode # train, val, or test
-        # loading annotations
-        self.trajectories_files = sorted(os.listdir(ssl_trajectories_dir))
+        # loading annotations for the selected split
+        split_keys = json.load(open(train_val_test_sets_dir + self.mode + '_keys.json'))
+        self.trajectories_files = filenames2trajnames(split_keys)
+
         self.traj_nan = json.load(open(train_val_test_sets_dir + 'traj_nan.json'))
         self.trajectories_files = exclude_list(self.trajectories_files, self.traj_nan)
-        # excluding val samples
-        val_samples2exclude = filenames2trajnames(json.load(open(train_val_test_sets_dir + 'val_keys.json')))
-        self.trajectories_files = exclude_list(self.trajectories_files, val_samples2exclude)
-        # excluding test samples
-        test_samples2exclude = filenames2trajnames(json.load(open(train_val_test_sets_dir + 'test_keys.json')))
-        self.trajectories_files = exclude_list(self.trajectories_files, test_samples2exclude)
 
-        # Keep only trajectory files that have matching frame folders
-        self.trajectories_files = [f for f in self.trajectories_files if os.path.isdir(ssl_frames_dir + f.split('.')[0] + '/')]
+        # Keep only trajectory files that exist and have matching frame folders
+        self.trajectories_files = [
+            f for f in self.trajectories_files
+            if os.path.isfile(ssl_trajectories_dir + f)
+            and os.path.isdir(ssl_frames_dir + f.split('.')[0] + '/')
+        ]
         print(f"Usable {mode} trajectories:", len(self.trajectories_files))
         # print('traj files: ', self.trajectories_files)
         # print('len of traj files b4: ', len(self.trajectories_files))
