@@ -2,7 +2,7 @@
 # Basic Training Parameters
 # =========================
 
-base_learning_rate = 0.001
+base_learning_rate = 0.0015
 train_batch_size_2dcnn = 4
 test_batch_size_2dcnn = 4
 max_epochs = 2
